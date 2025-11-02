@@ -17,4 +17,4 @@ plugins {
 include(":app")
 include(":lib")
 
-rootProject.name = "notebook-test-project"
+rootProject.name = "tictactoe-lib"
