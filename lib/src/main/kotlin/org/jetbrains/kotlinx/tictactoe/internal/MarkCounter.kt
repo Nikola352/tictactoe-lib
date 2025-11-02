@@ -32,4 +32,19 @@ internal class MarkCounter(size: Int) {
         xCounts.fill(0)
         oCounts.fill(0)
     }
+
+    /**
+     * Copies the state from another MarkCounter instance.
+     *
+     * @param other The MarkCounter to copy state from
+     * @throws IllegalArgumentException if the other counter has a different size
+     */
+    fun copyFrom(other: MarkCounter) {
+        require(this.xCounts.size == other.xCounts.size) {
+            "Cannot copy from MarkCounter with different size"
+        }
+
+        System.arraycopy(other.xCounts, 0, this.xCounts, 0, xCounts.size)
+        System.arraycopy(other.oCounts, 0, this.oCounts, 0, oCounts.size)
+    }
 }

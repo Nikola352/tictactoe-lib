@@ -79,6 +79,24 @@ class TicTacToeGame private constructor(
     }
 
     /**
+     * Returns a new copy of the game with the specified move played.
+     *
+     * This method does not modify the current game instance.
+     *
+     * @param move The position where the current player wants to place their mark
+     * @return A new TicTacToeGame instance with the move played
+     * @throws IllegalArgumentException if the cell is already occupied
+     */
+    fun withMove(move: BoardPosition): TicTacToeGame {
+        val newBoard = board.copy()
+        newBoard.place(move, turn)
+        return TicTacToeGame(
+            board = newBoard,
+            initialTurn = turn.opposite()
+        )
+    }
+
+    /**
      * Resets the game to its initial state.
      *
      * Clears the board and sets the turn back to Player X.
