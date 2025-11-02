@@ -188,4 +188,32 @@ internal class Board(private val size: Int = 3) {
 
     /** Checks if this position is on the minor diagonal (top-right to bottom-left) */
     private fun BoardPosition.isOnMinorDiagonal(): Boolean = (row + column == size - 1)
+
+    /**
+     * Creates a copy of this board with the same state.
+     *
+     * @return A new Board instance with identical state to the current board
+     */
+    fun copy(): Board {
+        val newBoard = Board(size)
+
+        // Copy the board cells
+        for (row in 0 until size) {
+            for (col in 0 until size) {
+                newBoard.board[row][col] = this.board[row][col]
+            }
+        }
+
+        // Copy the counters
+        newBoard.rowCounts.copyFrom(this.rowCounts)
+        newBoard.columnCounts.copyFrom(this.columnCounts)
+        newBoard.diagonalCounts.copyFrom(this.diagonalCounts)
+
+        // Copy other state variables
+        newBoard.totalMarks = this.totalMarks
+        newBoard.winner = this.winner
+        newBoard.isOver = this.isOver
+
+        return newBoard
+    }
 }

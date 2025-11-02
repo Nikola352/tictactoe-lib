@@ -10,7 +10,7 @@ data class BoardPosition(
     val row: Int,
     val column: Int,
 ) {
-    private fun isValidForBoard(size: Int): Boolean =
+    fun isValidForBoard(size: Int): Boolean =
         row in 0 until size && column in 0 until size
 
     /**
