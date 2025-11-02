@@ -8,6 +8,10 @@ import org.jetbrains.kotlinx.tictactoe.model.GameState
  *
  * Players can be human-controlled (waiting for input) or AI-controlled
  * (calculating the best move algorithmically).
+ *
+ * The suspend modifier allows players to perform asynchronous operations
+ * such as: waiting for user input from a UI, making network requests for remote players
+ * or running computationally expensive AI algorithms without blocking
  */
 interface Player {
     /** The display name of the player */
@@ -16,10 +20,12 @@ interface Player {
     /**
      * Selects the next move for this player.
      *
-     * This method is called when it's this player's turn.
+     * This suspending function is called when it's this player's turn.
+     * It can suspend to wait for user input, network responses, or complete
+     * background computations without blocking the calling thread.
      *
      * @param gameState The current state of the game
      * @return The position where the player wants to place their mark
      */
-    fun selectMove(gameState: GameState): BoardPosition
+    suspend fun selectMove(gameState: GameState): BoardPosition
 }

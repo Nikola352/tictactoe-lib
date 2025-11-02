@@ -24,12 +24,12 @@ fun ticTacToeGame(
 }
 
 /**
- * Builder for configuring tic-tac-toe games using a DSL.
+ * Builder for configuring tic-tac-toe games using a DSL with coroutine support.
  *
  * This builder allows configuring:
- * - Player X with custom move selection logic
- * - Player O with custom move selection logic
- * - Event handlers for game state changes
+ * - Player X with custom async move selection logic
+ * - Player O with custom async move selection logic
+ * - Event handlers for game state changes with async operations
  *
  * @property boardSize The size of the game board
  */
@@ -42,13 +42,13 @@ class TicTacToeGameBuilder(private val boardSize: Int = 3) {
      * Configures the X player.
      *
      * @param name The display name for player X (default: "Player X")
-     * @param block A function that selects the player's next move given the game state
+     * @param block A suspending function that selects the player's next move given the game state
      */
-    fun playerX(name: String = "Player X", block: (GameState) -> BoardPosition) {
+    fun playerX(name: String = "Player X", block: suspend (GameState) -> BoardPosition) {
         xPlayer = {
             object : Player {
                 override val name = name
-                override fun selectMove(gameState: GameState) = block(gameState)
+                override suspend fun selectMove(gameState: GameState) = block(gameState)
             }
         }
     }
@@ -57,13 +57,13 @@ class TicTacToeGameBuilder(private val boardSize: Int = 3) {
      * Configures the O player.
      *
      * @param name The display name for player O (default: "Player O")
-     * @param block A function that selects the player's next move given the game state
+     * @param block A suspending function that selects the player's next move given the game state
      */
-    fun playerO(name: String = "Player O", block: (GameState) -> BoardPosition) {
+    fun playerO(name: String = "Player O", block: suspend (GameState) -> BoardPosition) {
         oPlayer = {
             object : Player {
                 override val name = name
-                override fun selectMove(gameState: GameState) = block(gameState)
+                override suspend fun selectMove(gameState: GameState) = block(gameState)
             }
         }
     }
@@ -73,9 +73,9 @@ class TicTacToeGameBuilder(private val boardSize: Int = 3) {
      *
      * @param handler A function that processes [GameEvent]s
      */
-    fun onEvent(handler: (GameEvent) -> Unit) {
+    fun onEvent(handler: suspend (GameEvent) -> Unit) {
         eventListener = object : GameEventListener {
-            override fun onGameEvent(event: GameEvent) = handler(event)
+            override suspend fun onGameEvent(event: GameEvent) = handler(event)
         }
     }
 
