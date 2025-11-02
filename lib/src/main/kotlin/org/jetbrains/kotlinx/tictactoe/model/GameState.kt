@@ -28,6 +28,7 @@ data class GameState(
      */
     fun isValidMove(position: BoardPosition): Boolean {
         if (isOver) return false
+        if (!position.isValidForBoard(board.size)) return false
         return board[position] == BoardCell.Empty
     }
 
