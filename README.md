@@ -1,73 +1,146 @@
-# Test Project for Notebook Team Interns
+# Tic-Tac-Toe Library
 
-**Task Description:**
+A flexible, well-tested Kotlin library for building tic-tac-toe games with customizable players and UI implementations.
 
-Your task is to implement a Tic-Tac-Toe library that is able to drive a
-game of Tic-Tac-Toe, but leaves it up to users of the library to create the
-UI. 
+## Project Structure
 
-After you have implemented the library, you must use it to create a simple
-command line game of Tic-Tac-Toe.
+```
+├── lib/                    # Core library (game engine, DSL, models)
+├── lib-players/           # Pre-built AI players (Random, Minimax)
+├── app/                   # Command-line game demo
+└── notebook/              # Kotlin notebook with usage examples
+```
 
-It should have the following features:
+## Features
 
-1. When starting the game, it should request the names of Player X and 
-   Player 0.
+- **Flexible Architecture**: Clean separation between game logic and UI
+- **Multiple APIs**: Direct engine access, game runner, or convenient DSL
+- **Coroutine Support**: Async player moves and event handling
+- **Extensible Player System**: Easy to implement custom AI or human players
+- **Event-Driven**: React to game state changes through listeners
+- **Configurable Board Size**: Play on any NxN board (default 3x3)
+- **Immutable State**: Safe snapshots for analysis and serialization
 
-2. It should print the initial state of the board when players have been named.
+## Quick Start
 
-3. Each player should then switch choosing a position on the board, placing
-   their mark. 
+### Running the Demo
 
-4. The game should print the updated board after each player has placed a mark.
+```bash
+./gradlew :app:run
+```
 
-5. When the game is over, the game should print the result of the game.
+This launches an interactive command-line game where you can play against various AI opponents.
 
-**Bonus Features:**
+### Using the Library
 
-6. Make the player type configurable, I.e., it should be possible to choose
-   whether one or both of the players are a human or a computer. The computer
-   can just place marks at random.
+Add the dependency to your `build.gradle.kts`:
 
-7. Make the computer opponent a real AI, making intelligent decisions.
+```kotlin
+dependencies {
+    implementation(project(":lib"))
+    implementation(project(":lib-players")) // Optional: pre-built AI players
+}
+```
 
-8. Create a Kotlin Notebook that demonstrates how to use the library.
+### Basic Usage
 
+**Using the DSL (Recommended):**
 
-If you have any questions, please contact christian.melchior@jetbrains.com.
+```kotlin
+import org.jetbrains.kotlinx.tictactoe.dsl.*
+import org.jetbrains.kotlinx.tictactoe.players.*
 
+runBlocking {
+    ticTacToeGame {
+        playerX { state -> 
+            // Your move selection logic
+            state.getAvailableMoves().first()
+        }
+        
+        playerO("AI Bot") { state ->
+            RandomPlayer().selectMove(state)
+        }
+        
+        onEvent { event ->
+            when (event) {
+                is GameEvent.BoardUpdated -> println("Board updated!")
+                is GameEvent.GameOver -> println("Winner: ${event.winner}")
+                else -> {}
+            }
+        }
+    }.play()
+}
+```
 
-**Evaluation Criteria:**
+**Using the Game Engine Directly:**
 
-1. Does the code work?
-2. Is the code readable?
-3. Is the code documented?
-4. Are there tests and are they passing?
-5. How easy is it to extend the code with new player types or display formats?
+```kotlin
+import org.jetbrains.kotlinx.tictactoe.game.*
+import org.jetbrains.kotlinx.tictactoe.model.*
 
-It is more important to make the code readable, documented and tested
-than implementing new features.
+val game = TicTacToeGame(boardSize = 3)
 
+game.playMove(BoardPosition(0, 0)) // X plays
+game.playMove(BoardPosition(1, 1)) // O plays
 
-**Prepare to discuss the following topics:**
+val state = game.getState()
+println("Next player: ${state.nextToPlay}")
+println("Game over: ${state.isOver}")
+```
 
-- Why does your implementation work?
+## Creating Custom Players
 
-- Why did you choose your particular implementation? What alternatives did 
-  you consider?
+Implement the `Player` interface:
 
-- What are the advantages and disadvantages of your particular implementation?
+```kotlin
+class MyAI(override val name: String) : Player {
+    override suspend fun selectMove(gameState: GameState): BoardPosition {
+        // Your AI logic here
+        return gameState.getAvailableMoves().random()
+    }
+}
+```
 
-- Why did you choose the approach to testing you did? What are the advantages 
-  and disadvantages of your particular approach?
+## Exploring the Library
 
-It is perfectly fine to use Google, Stack Overflow, OpenAI, Cursor or any other
-resource to solve the problem, but you should be prepared to explain your
-approach to the interviewer.
+Check out the **Kotlin notebook** (`notebook/demo.ipynb`) for comprehensive examples including:
+- Direct engine usage
+- Creating AI players (Random, Smart, Minimax)
+- Using the game runner
+- DSL examples
+- Custom board sizes
 
+## Key Components
 
+### Core Library (`lib/`)
 
+- **`TicTacToeGame`**: Core game engine with move validation and win detection
+- **`TicTacToeGameRunner`**: Orchestrates games with automatic turn management
+- **`Player`**: Interface for implementing human or AI players
+- **`GameEventListener`**: React to game events (moves, invalid moves, game over)
+- **DSL**: Type-safe builder for quick game setup
 
+### Player Library (`lib-players/`)
 
+- **`RandomPlayer`**: Makes random valid moves
+- **`MinimaxPlayer`**: Perfect-play AI using the minimax algorithm
 
+### CLI Demo (`app/`)
 
+Interactive command-line game with:
+- Human vs Human
+- Human vs AI
+- AI vs AI
+- Configurable player types
+
+## Architecture Highlights
+
+- **Clean API**: Separate concerns (engine, orchestration, UI)
+- **Immutable State**: `GameState` and `BoardState` are snapshots
+- **Extensible**: Easy to add new player types or display formats
+- **Testable**: Well-tested with comprehensive unit tests
+- **Modern Kotlin**: Coroutines, sealed interfaces, DSL builders
+
+## License
+
+MIT License - feel free to use this library in your projects!
