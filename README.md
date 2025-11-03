@@ -103,7 +103,7 @@ class MyAI(override val name: String) : Player {
 
 ## Exploring the Library
 
-Check out the **Kotlin notebook** (`notebook/tic-tac-toe-lib-demo.ipynb`) for comprehensive examples including:
+Check out the **Kotlin notebook** (`notebook/demo.ipynb`) for comprehensive examples including:
 - Direct engine usage
 - Creating AI players (Random, Smart, Minimax)
 - Using the game runner
